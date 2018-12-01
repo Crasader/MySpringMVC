@@ -1,4 +1,4 @@
-package cn.com.servyou.annotation;
+package com.sumoon.annotation;
 
 import java.lang.annotation.*;
 
@@ -9,5 +9,5 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Controller {
-    String value();
+    String value() default "";
 }

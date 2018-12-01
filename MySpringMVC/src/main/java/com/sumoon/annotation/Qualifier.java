@@ -1,4 +1,4 @@
-package cn.com.servyou.annotation;
+package com.sumoon.annotation;
 
 import java.lang.annotation.*;
 
@@ -10,6 +10,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Qualifier {
 
-    String value();
+    String value() default "";
 
 }

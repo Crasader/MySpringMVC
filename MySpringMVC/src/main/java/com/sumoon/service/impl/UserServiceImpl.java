@@ -1,7 +1,8 @@
 package cn.com.servyou.service.impl;
 
-import cn.com.servyou.annotation.Service;
-import cn.com.servyou.service.UserService;
+
+import com.sumoon.annotation.Service;
+import com.sumoon.service.UserService;
 
 /**
  * 用户服务实现类

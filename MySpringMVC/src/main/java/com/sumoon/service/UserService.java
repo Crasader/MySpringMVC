@@ -1,6 +1,4 @@
-package cn.com.servyou.service;
-
-import cn.com.servyou.annotation.Service;
+package com.sumoon.service;
 
 /**
  * 用户服务接口类

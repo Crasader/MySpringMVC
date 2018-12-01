@@ -1,9 +1,9 @@
-package cn.com.servyou.controller;
+package com.sumoon.controller;
 
-import cn.com.servyou.annotation.Controller;
-import cn.com.servyou.annotation.Qualifier;
-import cn.com.servyou.annotation.RequestMapping;
-import cn.com.servyou.service.UserService;
+import com.sumoon.annotation.Controller;
+import com.sumoon.annotation.Qualifier;
+import com.sumoon.annotation.RequestMapping;
+import com.sumoon.service.UserService;
 
 /**
  * 用户控制器

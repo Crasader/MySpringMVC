@@ -1,4 +1,4 @@
-package cn.com.servyou.annotation;
+package com.sumoon.annotation;
 
 import java.lang.annotation.*;
 

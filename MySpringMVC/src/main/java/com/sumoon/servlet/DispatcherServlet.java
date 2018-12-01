@@ -1,10 +1,10 @@
-package cn.com.servyou.servlet;
+package com.sumoon.servlet;
 
-import cn.com.servyou.annotation.Controller;
-import cn.com.servyou.annotation.Qualifier;
-import cn.com.servyou.annotation.RequestMapping;
-import cn.com.servyou.annotation.Service;
-import cn.com.servyou.controller.UserController;
+import com.sumoon.annotation.Controller;
+import com.sumoon.annotation.Qualifier;
+import com.sumoon.annotation.RequestMapping;
+import com.sumoon.annotation.Service;
+import com.sumoon.controller.UserController;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -28,7 +28,7 @@ import java.util.Map;
  * DispatchServlet
  */
 @WebServlet(name = "dispatcherServlet", urlPatterns = "/", loadOnStartup = 1, initParams = {
-        @WebInitParam(name = "base-package", value = "cn.com.servyou") })
+        @WebInitParam(name = "base-package", value = "com.sumoon") })
 public class DispatcherServlet extends HttpServlet {
 
     private String basePackage = "";
