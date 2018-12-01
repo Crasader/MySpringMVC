@@ -3,12 +3,11 @@ package com.sumoon.annotation;
 import java.lang.annotation.*;
 
 /**
- * 请求映射注解
- * 作用于类和方法上
+ * 自动注入注解
  */
 @Documented
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RequestMapping {
+public @interface Autowired {
     String value() default "";
 }

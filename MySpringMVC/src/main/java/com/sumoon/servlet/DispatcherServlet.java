@@ -1,10 +1,9 @@
 package com.sumoon.servlet;
 
-import com.sumoon.annotation.Controller;
-import com.sumoon.annotation.Qualifier;
-import com.sumoon.annotation.RequestMapping;
-import com.sumoon.annotation.Service;
+import com.sumoon.annotation.*;
 import com.sumoon.controller.UserController;
+import com.sumoon.service.UserService;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -25,13 +24,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * DispatchServlet
+ * 转发Servlet
  */
 @WebServlet(name = "dispatcherServlet", urlPatterns = "/", loadOnStartup = 1, initParams = {
-        @WebInitParam(name = "base-package", value = "com.sumoon") })
+        @WebInitParam(name = "base-package", value = "com.sumoon")})
 public class DispatcherServlet extends HttpServlet {
 
-    private String basePackage = "";
     /**
      * 带全限定名的包名
      */
@@ -90,10 +88,11 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        basePackage = config.getInitParameter("base-package");
+        String basePackage = config.getInitParameter("base-package");
         try {
             scanPackage(basePackage);
             instance();
+            // 通过反射实现控制反转（IOC）
             springIOC();
             handleMethodPackageMapping();
         } catch (ClassNotFoundException e) {
@@ -107,7 +106,7 @@ public class DispatcherServlet extends HttpServlet {
 
     /**
      * 处理方法和全限定名
-     * 
+     *
      * @throws ClassNotFoundException
      */
     private void handleMethodPackageMapping() throws ClassNotFoundException {
@@ -136,22 +135,45 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     /**
-     * Spring IOC
+     * 实现依赖控制反转
+     *
+     * @throws IllegalArgumentException illegal access
+     * @throws IllegalAccessException   illegal access
      */
     private void springIOC() throws IllegalArgumentException, IllegalAccessException {
         for (Map.Entry<String, Object> entry : instanceMap.entrySet()) {
             Field[] fields = entry.getValue().getClass().getDeclaredFields();
             for (Field field : fields) {
-                if (field.isAnnotationPresent(Qualifier.class)) {
-                    Qualifier qualifier = field.getAnnotation(Qualifier.class);
-                    String name = qualifier.value();
-                    field.setAccessible(true);
-                    field.set(entry.getValue(), instanceMap.get(name));
+                if (field.isAnnotationPresent(Autowired.class)) {
+                    Autowired autowired = field.getAnnotation(Autowired.class);
+                    String name = autowired.value();
+                    if (StringUtils.isBlank(name)) {
+                        for (Map.Entry<String, Object> entrySet : instanceMap.entrySet()) {
+                            Object value = entrySet.getValue();
+                            if (value instanceof UserService) {
+                                field.setAccessible(true);
+                                field.set(entry.getValue(), value);
+                            }
+                        }
+                    } else {
+                        if (instanceMap.get(name) == null) {
+                            throw new RuntimeException("找不到对应注解的类");
+                        }
+                        field.setAccessible(true);
+                        field.set(entry.getValue(), instanceMap.get(name));
+                    }
                 }
             }
         }
     }
 
+    /**
+     * 实例化全限定类
+     *
+     * @throws ClassNotFoundException class Not found
+     * @throws IllegalAccessException illegal Access
+     * @throws InstantiationException instantiation error
+     */
     private void instance() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         for (String packageName : packageNames) {
             Class<?> clazz = Class.forName(packageName);
@@ -159,13 +181,19 @@ public class DispatcherServlet extends HttpServlet {
                 // 控制器注解
                 Controller annotation = clazz.getAnnotation(Controller.class);
                 String controllerName = annotation.value();
+                if (StringUtils.isBlank(controllerName)) {
+                    controllerName = StringUtils.uncapitalize(clazz.getSimpleName());
+                }
                 instanceMap.put(controllerName, clazz.newInstance());
                 nameMap.put(packageName, controllerName);
-                System.out.println("controller: " + controllerName + ", value: " + controllerName);
+                System.out.println("controller: " + packageName + ", value: " + controllerName);
             } else if (clazz.isAnnotationPresent(Service.class)) {
                 // 服务器注解
                 Service service = clazz.getAnnotation(Service.class);
                 String serviceName = service.value();
+                if (StringUtils.isBlank(serviceName)) {
+                    serviceName = StringUtils.uncapitalize(clazz.getSimpleName());
+                }
                 instanceMap.put(serviceName, clazz.newInstance());
                 nameMap.put(packageName, serviceName);
                 System.out.println("service: " + packageName + ", value: " + serviceName);
@@ -175,7 +203,7 @@ public class DispatcherServlet extends HttpServlet {
 
     /**
      * 扫描基包
-     * 
+     *
      * @param basePackage 基包路径名
      */
     private void scanPackage(String basePackage) {

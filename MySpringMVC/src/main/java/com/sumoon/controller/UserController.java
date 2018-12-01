@@ -1,18 +1,18 @@
 package com.sumoon.controller;
 
+import com.sumoon.annotation.Autowired;
 import com.sumoon.annotation.Controller;
-import com.sumoon.annotation.Qualifier;
 import com.sumoon.annotation.RequestMapping;
 import com.sumoon.service.UserService;
 
 /**
  * 用户控制器
  */
-@Controller("userController")
+@Controller
 @RequestMapping("/uc")
 public class UserController {
 
-    @Qualifier("userService")
+    @Autowired
     private UserService userService;
 
     @RequestMapping("/getName")

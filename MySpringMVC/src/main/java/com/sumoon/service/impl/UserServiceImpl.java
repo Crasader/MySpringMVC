@@ -1,4 +1,4 @@
-package cn.com.servyou.service.impl;
+package com.sumoon.service.impl;
 
 
 import com.sumoon.annotation.Service;
@@ -7,7 +7,7 @@ import com.sumoon.service.UserService;
 /**
  * 用户服务实现类
  */
-@Service("userService")
+@Service
 public class UserServiceImpl implements UserService {
 
     @Override

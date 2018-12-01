@@ -9,7 +9,5 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Qualifier {
-
     String value() default "";
-
 }
