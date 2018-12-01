@@ -15,37 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * <pre>
- * 类名: DispatcherServlet
- * </pre>
- * 
- * <pre>
- * 描述: DispatcherServlet
- * </pre>
- * 
- * <pre>
- * 版权: 税友软件集团股份有限公司
- * </pre>
- * 
- * <pre>
- * 日期: 2018年11月30日 19:15
- * </pre>
- * 
- * <pre>
- * 作者: yuhd
- * </pre>
+ * DispatchServlet
  */
 @WebServlet(name = "dispatcherServlet", urlPatterns = "/", loadOnStartup = 1, initParams = {
         @WebInitParam(name = "base-package", value = "cn.com.servyou") })
@@ -97,7 +77,6 @@ public class DispatcherServlet extends HttpServlet {
                     method.setAccessible(true);
                     Object responseValue = method.invoke(controller);
                     req.getRequestDispatcher("/index.jsp").forward(req, resp);
-//                    resp.sendRedirect();
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (IllegalArgumentException e) {

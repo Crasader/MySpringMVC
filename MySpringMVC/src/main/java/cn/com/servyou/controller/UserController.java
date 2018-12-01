@@ -5,6 +5,9 @@ import cn.com.servyou.annotation.Qualifier;
 import cn.com.servyou.annotation.RequestMapping;
 import cn.com.servyou.service.UserService;
 
+/**
+ * 用户控制器
+ */
 @Controller("userController")
 @RequestMapping("/uc")
 public class UserController {
