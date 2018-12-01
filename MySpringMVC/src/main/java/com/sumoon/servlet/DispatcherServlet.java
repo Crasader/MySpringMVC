@@ -4,6 +4,8 @@ import com.sumoon.annotation.*;
 import com.sumoon.controller.UserController;
 import com.sumoon.service.UserService;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -29,6 +31,8 @@ import java.util.Map;
 @WebServlet(name = "dispatcherServlet", urlPatterns = "/", loadOnStartup = 1, initParams = {
         @WebInitParam(name = "base-package", value = "com.sumoon")})
 public class DispatcherServlet extends HttpServlet {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DispatcherServlet.class);
 
     /**
      * 带全限定名的包名
@@ -73,7 +77,7 @@ public class DispatcherServlet extends HttpServlet {
                 try {
                     method.setAccessible(true);
                     Object responseValue = method.invoke(instanceMap.get(controllerName));
-                    System.out.println("调用方法：" + method.getName() + ", 返回值：" + responseValue);
+                    LOGGER.info("调用方法：{}，返回值：{}", method.getName(), responseValue);
                     req.getRequestDispatcher("/index.jsp").forward(req, resp);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -183,14 +187,14 @@ public class DispatcherServlet extends HttpServlet {
                 String controllerName = StringUtils.defaultIfBlank(annotation.value(), StringUtils.uncapitalize(clazz.getSimpleName()));
                 instanceMap.put(controllerName, clazz.newInstance());
                 nameMap.put(packageName, controllerName);
-                System.out.println("controller: " + packageName + ", value: " + controllerName);
+                LOGGER.info("controller：{}, value: {}", packageName, controllerName);
             } else if (clazz.isAnnotationPresent(Service.class)) {
                 // 服务器注解
                 Service service = clazz.getAnnotation(Service.class);
                 String serviceName = StringUtils.defaultIfBlank(service.value(), StringUtils.uncapitalize(clazz.getSimpleName()));
                 instanceMap.put(serviceName, clazz.newInstance());
                 nameMap.put(packageName, serviceName);
-                System.out.println("service: " + packageName + ", value: " + serviceName);
+                LOGGER.info("service：{}, value: {}", packageName, serviceName);
             }
         }
     }
@@ -201,15 +205,18 @@ public class DispatcherServlet extends HttpServlet {
      * @param basePackage 基包路径名
      */
     private void scanPackage(String basePackage) {
+        LOGGER.info("扫描包：{}", basePackage);
         URL url = this.getClass().getClassLoader().getResource(basePackage.replaceAll("\\.", "/"));
         File file = new File(url.getPath());
         System.out.println("scan: " + basePackage);
         for (File myfile : file.listFiles()) {
             if (myfile.isDirectory()) {
                 // 是目录，递归扫描
+                LOGGER.info("包名：{}为路径，需要递归扫描包：{}", basePackage, basePackage + "." + myfile.getName());
                 scanPackage(basePackage + "." + myfile.getName());
             } else {
                 // 是文件
+                LOGGER.info("包名：{} 对应类", packageNames);
                 packageNames.add(basePackage + "." + myfile.getName().split("\\.")[0]);
             }
         }
