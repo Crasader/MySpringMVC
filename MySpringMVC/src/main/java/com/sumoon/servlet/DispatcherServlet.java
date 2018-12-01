@@ -69,11 +69,11 @@ public class DispatcherServlet extends HttpServlet {
         if (method != null) {
             String packageName = methodPackageMap.get(method);
             String controllerName = nameMap.get(packageName);
-            if (instanceMap.get(controllerName) instanceof UserController) {
-                UserController controller = (UserController) instanceMap.get(controllerName);
+            if (instanceMap.get(controllerName) != null) {
                 try {
                     method.setAccessible(true);
-                    Object responseValue = method.invoke(controller);
+                    Object responseValue = method.invoke(instanceMap.get(controllerName));
+                    System.out.println("调用方法：" + method.getName() + ", 返回值：" + responseValue);
                     req.getRequestDispatcher("/index.jsp").forward(req, resp);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -180,20 +180,14 @@ public class DispatcherServlet extends HttpServlet {
             if (clazz.isAnnotationPresent(Controller.class)) {
                 // 控制器注解
                 Controller annotation = clazz.getAnnotation(Controller.class);
-                String controllerName = annotation.value();
-                if (StringUtils.isBlank(controllerName)) {
-                    controllerName = StringUtils.uncapitalize(clazz.getSimpleName());
-                }
+                String controllerName = StringUtils.defaultIfBlank(annotation.value(), StringUtils.uncapitalize(clazz.getSimpleName()));
                 instanceMap.put(controllerName, clazz.newInstance());
                 nameMap.put(packageName, controllerName);
                 System.out.println("controller: " + packageName + ", value: " + controllerName);
             } else if (clazz.isAnnotationPresent(Service.class)) {
                 // 服务器注解
                 Service service = clazz.getAnnotation(Service.class);
-                String serviceName = service.value();
-                if (StringUtils.isBlank(serviceName)) {
-                    serviceName = StringUtils.uncapitalize(clazz.getSimpleName());
-                }
+                String serviceName = StringUtils.defaultIfBlank(service.value(), StringUtils.uncapitalize(clazz.getSimpleName()));
                 instanceMap.put(serviceName, clazz.newInstance());
                 nameMap.put(packageName, serviceName);
                 System.out.println("service: " + packageName + ", value: " + serviceName);
