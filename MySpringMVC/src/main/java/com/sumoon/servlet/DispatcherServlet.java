@@ -216,7 +216,7 @@ public class DispatcherServlet extends HttpServlet {
                 scanPackage(basePackage + "." + myfile.getName());
             } else {
                 // 是文件
-                LOGGER.info("包名：{} 对应类", packageNames);
+                LOGGER.info("包名：{} 对应类", basePackage);
                 packageNames.add(basePackage + "." + myfile.getName().split("\\.")[0]);
             }
         }
